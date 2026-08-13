@@ -14,6 +14,8 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true, nullable = false)
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -106,7 +108,7 @@ public class Book {
     }
 
     public void setBookStatusWantToRead() {
-        if(isWantToRead()) {
+        if (isWantToRead()) {
             throw new StatusChangeException("O livro já está requerido para leitura.");
         }
         this.bookStatus = BookStatus.WANT_TO_READ;

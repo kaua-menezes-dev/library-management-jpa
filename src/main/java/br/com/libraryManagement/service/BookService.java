@@ -5,6 +5,7 @@ import br.com.libraryManagement.dao.BookDAO;
 import br.com.libraryManagement.model.entity.Author;
 import br.com.libraryManagement.model.entity.Book;
 import br.com.libraryManagement.model.exceptions.AuthorNotFoundException;
+import br.com.libraryManagement.model.exceptions.BookAlreadyExistsException;
 import br.com.libraryManagement.model.exceptions.BookNotFoundException;
 import br.com.libraryManagement.util.Validator;
 import jakarta.persistence.EntityManager;
@@ -25,6 +26,9 @@ public class BookService {
 
     public void registerBook(String title, Long idAuthor, Integer publicationYear, String description) {
         validateBookData(title, idAuthor, publicationYear, description);
+
+        Book existingBook = bookDAO.findBookByTitle(title);
+        requireBookNotExists(existingBook);
 
         try {
             entityManager.getTransaction().begin();
@@ -245,6 +249,12 @@ public class BookService {
         List<Book> books = bookDAO.findAllBooks();
         requireExistBookOnList(books);
         return books;
+    }
+
+    private void requireBookNotExists(Book book) {
+        if (book != null) {
+            throw new BookAlreadyExistsException("Este Livro já foi registrado.");
+        }
     }
 
     private void requireExistBook(Book book) {
