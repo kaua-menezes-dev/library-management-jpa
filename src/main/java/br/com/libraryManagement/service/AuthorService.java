@@ -42,31 +42,6 @@ public class AuthorService {
         }
     }
 
-    public void addAuthorToBooks(Long authorId, Long bookId) {
-        Validator.requireNotNull(bookId, "ID do livro");
-        Validator.requireNotNull(authorId, "ID do autor");
-
-        try {
-            entityManager.getTransaction().begin();
-
-            Book book = bookDAO.findByBookId(bookId);
-            requireExistBook(book);
-
-            Author author = authorDAO.findByAuthorId(authorId);
-            requireExistAuthor(author);
-
-            author.addBook(book);
-
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            if (entityManager.getTransaction().isActive()) {
-                entityManager.getTransaction().rollback();
-            }
-
-            throw e;
-        }
-    }
-
     public void removeAuthorById(Long id) {
         Validator.requireNotNull(id, "ID do autor");
 
@@ -130,11 +105,11 @@ public class AuthorService {
         return authors;
     }
 
-    public List<Author> findAuthorByBookTitle(String bookTitle) {
+    public Author findAuthorByBookTitle(String bookTitle) {
         Validator.requireTitleLength(bookTitle, "Titulo do livro");
-        List<Author> authors = authorDAO.findAuthorByBookTitle(bookTitle);
-        requireExistAuthorOnList(authors);
-        return authors;
+        Author author = authorDAO.findAuthorByBookTitle(bookTitle);
+        requireExistAuthor(author);
+        return author;
     }
 
     private void requireExistAuthorOnList(List<Author> authors) {
