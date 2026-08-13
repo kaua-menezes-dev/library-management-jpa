@@ -2,6 +2,7 @@ package br.com.libraryManagement.dao;
 
 import br.com.libraryManagement.model.entity.Book;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 
 import java.util.List;
 
@@ -23,9 +24,15 @@ public class BookDAO {
 
     public Book findBookByTitle(String bookTitle) {
         String jpql = "SELECT b FROM Book b WHERE b.title = ?1";
-        return entityManager.createQuery(jpql, Book.class)
-                .setParameter(1, bookTitle)
-                .getSingleResult();
+
+        try {
+            return entityManager.createQuery(jpql, Book.class)
+                    .setParameter(1, bookTitle)
+                    .getSingleResult();
+
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public Book findByBookId(Long id) {

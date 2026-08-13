@@ -2,6 +2,7 @@ package br.com.libraryManagement.dao;
 
 import br.com.libraryManagement.model.entity.Author;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 
 import java.util.List;
 
@@ -23,9 +24,14 @@ public class AuthorDAO {
 
     public Author findByAuthorName(String authorName) {
         String jpql = "SELECT a FROM Author a WHERE a.name = ?1";
-        return entityManager.createQuery(jpql, Author.class)
-                .setParameter(1, authorName)
-                .getSingleResult();
+
+        try {
+            return entityManager.createQuery(jpql, Author.class)
+                    .setParameter(1, authorName)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public Author findByAuthorId(Long id) {
@@ -38,10 +44,15 @@ public class AuthorDAO {
                 .getResultList();
     }
 
-    public List<Author> findAuthorByBookTitle(String bookTitle) {
+    public Author findAuthorByBookTitle(String bookTitle) {
         String jpql = "SELECT b.author FROM Book b WHERE b.title = ?1";
-        return entityManager.createQuery(jpql, Author.class)
-                .setParameter(1, bookTitle)
-                .getResultList();
+
+        try {
+            return entityManager.createQuery(jpql, Author.class)
+                    .setParameter(1, bookTitle)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }
